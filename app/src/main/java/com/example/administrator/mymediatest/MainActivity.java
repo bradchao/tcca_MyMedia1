@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
@@ -156,7 +157,25 @@ public class MainActivity extends AppCompatActivity {
         adapter = new SimpleAdapter(this,data,R.layout.item, from, to);
         listView.setAdapter(adapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                playMusic(i);
+            }
+        });
+
     }
+
+    private void playMusic(int i){
+        mService.pausePlay();
+
+        String file = data.get(i).get("file");
+        Intent it = new Intent(this, PlayMusicService.class);
+        it.putExtra("play", file);
+        startService(it);
+
+    }
+
 
     public void test0(View view){
         audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,0);

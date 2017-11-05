@@ -29,6 +29,13 @@ public class PlayBGMustService extends Service {
         mediaPlayer.start();
     }
 
+    void pausePlay(){
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.pause();
+        }
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
