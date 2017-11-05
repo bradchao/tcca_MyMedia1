@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -113,16 +114,44 @@ public class MainActivity extends AppCompatActivity {
     private void getMusicList(){
         data = new LinkedList<>();
 
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+
         File musicPath =
                 Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_MUSIC);
         File[] musics = musicPath.listFiles();
         for (File music : musics){
-            HashMap<String,String> musicInfo = new HashMap<>();
-            musicInfo.put("file", music.getAbsolutePath());
+            if (music.isDirectory()){
+                File[] smusics = music.listFiles();
+                for (File smusic : smusics){
+                    if (!smusic.isFile()) continue;
+                    mmr.setDataSource(smusic.toString());
+
+                    String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                    String singer = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+
+                    HashMap<String,String> musicInfo = new HashMap<>();
+                    musicInfo.put("file", music.getAbsolutePath());
+                    musicInfo.put(from[0], "sub:" + title);
+                    musicInfo.put(from[1], singer);
+
+                    data.add(musicInfo);
+                }
+            }else if (music.isFile()){
+                mmr.setDataSource(music.toString());
+
+                String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                String singer = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
 
 
-            data.add(musicInfo);
+                HashMap<String,String> musicInfo = new HashMap<>();
+                musicInfo.put("file", music.getAbsolutePath());
+                musicInfo.put(from[0], title);
+                musicInfo.put(from[1], singer);
+
+                data.add(musicInfo);
+            }
+
         }
         adapter = new SimpleAdapter(this,data,R.layout.item, from, to);
         listView.setAdapter(adapter);
