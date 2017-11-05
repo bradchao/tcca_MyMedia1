@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -15,12 +16,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SimpleAdapter;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
     private AudioManager audioManager;
     private SeekBar seekBar;
     private boolean isConnect;
+    private ListView listView;
+    private SimpleAdapter adapter;
+    private String[] from = {"title","singer"};
+    private int[] to = {R.id.title, R.id.singer};
+    private LinkedList<HashMap<String,String>> data;
+
 
     private PlayBGMustService mService;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -68,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init(){
         seekBar = (SeekBar)findViewById(R.id.seekbar);
-
+        listView = (ListView)findViewById(R.id.listview);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         int vol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -91,6 +104,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+        getMusicList();
+
+    }
+
+    private void getMusicList(){
+        data = new LinkedList<>();
+
+        File musicPath =
+                Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_MUSIC);
+        File[] musics = musicPath.listFiles();
+        for (File music : musics){
+            HashMap<String,String> musicInfo = new HashMap<>();
+            musicInfo.put("file", music.getAbsolutePath());
+
+
+            data.add(musicInfo);
+        }
+        adapter = new SimpleAdapter(this,data,R.layout.item, from, to);
+        listView.setAdapter(adapter);
 
     }
 
