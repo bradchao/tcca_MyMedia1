@@ -57,6 +57,12 @@
         android:text="Pause"
         android:onClick="pauseMusic"
         />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="remote"
+        android:onClick="playRemote"
+        />
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"

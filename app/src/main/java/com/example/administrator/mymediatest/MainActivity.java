@@ -8,6 +8,8 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -23,6 +25,7 @@ import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -215,5 +218,29 @@ public class MainActivity extends AppCompatActivity {
         Intent it = new Intent(this, PlayMusicService.class);
         it.putExtra("pause", true);
         startService(it);
+    }
+
+    public void playRemote(View view) {
+        mService.pausePlay();
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(this,
+                    Uri.parse("http://www.bradchao.com/android/brad.mp3"));
+            mediaPlayer.prepareAsync();
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mediaPlayer) {
+                    mediaPlayer.start();
+                }
+            });
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
