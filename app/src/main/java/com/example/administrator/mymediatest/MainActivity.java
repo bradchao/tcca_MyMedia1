@@ -1,11 +1,16 @@
 package com.example.administrator.mymediatest;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +43,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,},
+                    0);
+        }else{
+            init();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            init();
+        }else{
+            finish();
+        }
+    }
+
+    private void init(){
         seekBar = (SeekBar)findViewById(R.id.seekbar);
 
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -62,7 +91,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
     }
+
     public void test0(View view){
         audioManager.playSoundEffect(AudioManager.FX_KEYPRESS_STANDARD,0);
     }
@@ -75,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER,0);
         seekBar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
     }
-
 
     @Override
     protected void onStart() {
@@ -91,5 +121,10 @@ public class MainActivity extends AppCompatActivity {
             unbindService(mConnection);
         }
 
+    }
+
+    public void test3(View view) {
+        Intent it = new Intent(this, Page2Activity.class);
+        startActivity(it);
     }
 }
