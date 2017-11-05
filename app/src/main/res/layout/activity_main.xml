@@ -51,6 +51,12 @@
         android:layout_height="2dp"
         android:background="#000"
         />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pause"
+        android:onClick="pauseMusic"
+        />
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"

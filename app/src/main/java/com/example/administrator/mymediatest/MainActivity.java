@@ -210,4 +210,10 @@ public class MainActivity extends AppCompatActivity {
         Intent it = new Intent(this, Page2Activity.class);
         startActivity(it);
     }
+
+    public void pauseMusic(View view) {
+        Intent it = new Intent(this, PlayMusicService.class);
+        it.putExtra("pause", true);
+        startService(it);
+    }
 }
